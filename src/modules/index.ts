@@ -1,9 +1,9 @@
 /**
  * Built-in modules shipped with prxy-monster-local.
  *
- * v0.4.0 ships 13 modules: airgap, cost-guard, exact-cache, ipc, mcp-optimizer,
+ * v0.4.0 ships 15 modules: airgap, cost-guard, exact-cache, ipc, mcp-optimizer,
  * patterns, semantic-cache, router, prompt-optimizer, tool-cache, guardrails,
- * rehydrator, compaction-bridge.
+ * rehydrator, compaction-bridge, structured-crusher, code-crusher.
  *
  * Modules are exported two ways:
  *   - Named factory functions (preferred for direct imports + custom config)
@@ -16,6 +16,14 @@ import type { Module } from '../types/sdk.js';
 import { airgap, type AirgapConfig } from './airgap.js';
 import { compactionBridge, type CompactionBridgeConfig } from './compaction-bridge.js';
 import { costGuard, type CostGuardConfig } from './cost-guard.js';
+import { ccrInject, type CcrInjectConfig } from './ccr-inject.js';
+import { ccrRetrieve, type CcrRetrieveConfig } from './ccr-retrieve.js';
+import {
+  structuredCrusher,
+  type StructuredCrusherConfig,
+  codeCrusher,
+  type CodeCrusherConfig,
+} from './crushers.js';
 import { exactCache, type ExactCacheConfig } from './exact-cache.js';
 import { guardrails, type GuardrailsConfig, type GuardrailBackend } from './guardrails.js';
 import { ipc, type IpcConfig } from './ipc.js';
@@ -33,11 +41,15 @@ import { toolCache, type ToolCacheConfig } from './tool-cache.js';
 
 export {
   airgap,
+  ccrInject,
+  ccrRetrieve,
+  codeCrusher,
   compactionBridge,
   costGuard,
   exactCache,
   guardrails,
   ipc,
+  structuredCrusher,
   mcpOptimizer,
   patterns,
   promptOptimizer,
@@ -49,9 +61,13 @@ export {
 
 export type {
   AirgapConfig,
+  CcrInjectConfig,
+  CcrRetrieveConfig,
+  CodeCrusherConfig,
   CompactionBridgeConfig,
   CostGuardConfig,
   ExactCacheConfig,
+  StructuredCrusherConfig,
   GuardrailBackend,
   GuardrailsConfig,
   IpcConfig,
@@ -84,10 +100,15 @@ export type ModuleFactory = (config?: Record<string, unknown>) => Module;
  */
 export const BUILTIN_MODULES: Record<string, ModuleFactory> = {
   airgap: (cfg) => airgap(cfg as AirgapConfig | undefined),
+  'ccr-inject': (cfg) => ccrInject(cfg as CcrInjectConfig | undefined),
+  'ccr-retrieve': (cfg) => ccrRetrieve(cfg as CcrRetrieveConfig | undefined),
+  'code-crusher': (cfg) => codeCrusher(cfg as CodeCrusherConfig | undefined),
   'compaction-bridge': (cfg) =>
     compactionBridge(cfg as CompactionBridgeConfig | undefined),
   'cost-guard': (cfg) => costGuard(cfg as CostGuardConfig | undefined),
   'exact-cache': (cfg) => exactCache(cfg as ExactCacheConfig | undefined),
+  'structured-crusher': (cfg) =>
+    structuredCrusher(cfg as StructuredCrusherConfig | undefined),
   guardrails: (cfg) => guardrails(cfg as GuardrailsConfig | undefined),
   ipc: (cfg) => ipc(cfg as IpcConfig | undefined),
   'mcp-optimizer': (cfg) => mcpOptimizer(cfg as McpOptimizerConfig | undefined),
@@ -99,4 +120,5 @@ export const BUILTIN_MODULES: Record<string, ModuleFactory> = {
   'tool-cache': (cfg) => toolCache(cfg as ToolCacheConfig | undefined),
 };
 
-export const DEFAULT_PIPELINE = 'mcp-optimizer,semantic-cache,patterns';
+export const DEFAULT_PIPELINE =
+  'mcp-optimizer,exact-cache,semantic-cache,structured-crusher,code-crusher,ipc,patterns';

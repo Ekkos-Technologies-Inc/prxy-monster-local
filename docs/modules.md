@@ -1,6 +1,6 @@
 # Modules
 
-prxy-monster-local v0.4.0 ships **thirteen built-in modules** and **five providers**
+prxy-monster-local v0.4.0 ships **sixteen built-in modules** and **five providers**
 (Anthropic, OpenAI, Google, Groq, AWS Bedrock). The modules are composable
 middleware around the LLM provider call: `pre()` runs before, can short-circuit
 the pipeline (cache hit, budget block); `post()` runs after, fire-and-forget
@@ -25,6 +25,10 @@ names, in order) or per-request with the `x-prxy-pipe` header.
 |------|-------|--------------|
 | `airgap` | pre + init | Blocks all outbound network calls except to a whitelist of provider hosts. |
 | `mcp-optimizer` | pre | Embeds MCP tools + the user's last message, prunes tools below a relevance threshold. |
+| `structured-crusher` | pre | Collapses large JSON in `tool_result` blocks. Optional `ccr:true` stores originals for `prxy_retrieve`. |
+| `code-crusher` | pre | Folds function bodies in file-read tool results with visible elision markers. |
+| `ccr-inject` | pre | Injects `prxy_retrieve` when using structured-crusher with `ccr:true`. |
+| `ccr-retrieve` | pre | Fulfills `prxy_retrieve` from blob storage; auto-loops on non-streaming requests. |
 | `exact-cache` | pre + post | sha256 of the canonical request → response cache hit. |
 | `semantic-cache` | pre + post | Vector-similarity cache hit on the message stream. |
 | `patterns` | pre + post | Golden Loop. Injects relevant past patterns into the system prompt; forges new ones from `the issue was X / fix is Y` markers in responses. |
@@ -40,7 +44,7 @@ names, in order) or per-request with the `x-prxy-pipe` header.
 The default pipeline (when nothing else is configured) is:
 
 ```
-mcp-optimizer,semantic-cache,patterns
+mcp-optimizer,exact-cache,semantic-cache,structured-crusher,code-crusher,ipc,patterns
 ```
 
 ## Per-module config

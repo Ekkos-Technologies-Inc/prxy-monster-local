@@ -12,6 +12,7 @@
 
 import type { CanonicalResponse } from '../types/canonical.js';
 import type { Logger, Module, RequestContext, ResponseContext } from '../types/sdk.js';
+import { maybeRunCcrRetrieveLoop } from '../modules/ccr-retrieve.js';
 
 export interface ExecuteOptions {
   /** Which modules to run for this request. Empty array → no pipeline. */
@@ -64,6 +65,21 @@ export async function executePipeline(opts: ExecuteOptions): Promise<ExecutionRe
   // Provider call (skipped if short-circuited)
   if (!response) {
     response = await callProvider();
+
+    if (modules.some((m) => m.name === 'ccr-retrieve')) {
+      const loop = await maybeRunCcrRetrieveLoop({
+        ctx,
+        response,
+        callProvider,
+        config: {},
+        logger: log,
+      });
+      response = loop.response;
+      if (loop.loops > 0) {
+        ctx.metadata.set('ccr-retrieve.auto_loops', loop.loops);
+        ctx.metadata.set('ccr-retrieve.applied', true);
+      }
+    }
   }
 
   // Post-modules — fire-and-forget. We schedule them but don't await; the
