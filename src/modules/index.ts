@@ -18,6 +18,7 @@ import { compactionBridge, type CompactionBridgeConfig } from './compaction-brid
 import { costGuard, type CostGuardConfig } from './cost-guard.js';
 import { ccrInject, type CcrInjectConfig } from './ccr-inject.js';
 import { ccrRetrieve, type CcrRetrieveConfig } from './ccr-retrieve.js';
+import { steelBrowser, type SteelBrowserConfig } from './steel-browser.js';
 import {
   structuredCrusher,
   type StructuredCrusherConfig,
@@ -43,6 +44,7 @@ export {
   airgap,
   ccrInject,
   ccrRetrieve,
+  steelBrowser,
   codeCrusher,
   compactionBridge,
   costGuard,
@@ -63,6 +65,7 @@ export type {
   AirgapConfig,
   CcrInjectConfig,
   CcrRetrieveConfig,
+  SteelBrowserConfig,
   CodeCrusherConfig,
   CompactionBridgeConfig,
   CostGuardConfig,
@@ -102,6 +105,7 @@ export const BUILTIN_MODULES: Record<string, ModuleFactory> = {
   airgap: (cfg) => airgap(cfg as AirgapConfig | undefined),
   'ccr-inject': (cfg) => ccrInject(cfg as CcrInjectConfig | undefined),
   'ccr-retrieve': (cfg) => ccrRetrieve(cfg as CcrRetrieveConfig | undefined),
+  'steel-browser': (cfg) => steelBrowser(cfg as SteelBrowserConfig | undefined),
   'code-crusher': (cfg) => codeCrusher(cfg as CodeCrusherConfig | undefined),
   'compaction-bridge': (cfg) =>
     compactionBridge(cfg as CompactionBridgeConfig | undefined),

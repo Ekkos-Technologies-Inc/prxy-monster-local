@@ -29,6 +29,7 @@ names, in order) or per-request with the `x-prxy-pipe` header.
 | `code-crusher` | pre | Folds function bodies in file-read tool results with visible elision markers. |
 | `ccr-inject` | pre | Injects `prxy_retrieve` when using structured-crusher with `ccr:true`. |
 | `ccr-retrieve` | pre | Fulfills `prxy_retrieve` from blob storage; auto-loops on non-streaming requests. |
+| `steel-browser` | pre | Injects and fulfills `steel_scrape` via Steel.dev; auto-loops on non-streaming requests. |
 | `exact-cache` | pre + post | sha256 of the canonical request → response cache hit. |
 | `semantic-cache` | pre + post | Vector-similarity cache hit on the message stream. |
 | `patterns` | pre + post | Golden Loop. Injects relevant past patterns into the system prompt; forges new ones from `the issue was X / fix is Y` markers in responses. |

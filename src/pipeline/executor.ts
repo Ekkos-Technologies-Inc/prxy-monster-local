@@ -13,6 +13,7 @@
 import type { CanonicalResponse } from '../types/canonical.js';
 import type { Logger, Module, RequestContext, ResponseContext } from '../types/sdk.js';
 import { maybeRunCcrRetrieveLoop } from '../modules/ccr-retrieve.js';
+import { maybeRunSteelBrowserLoop } from '../modules/steel-browser.js';
 
 export interface ExecuteOptions {
   /** Which modules to run for this request. Empty array → no pipeline. */
@@ -78,6 +79,21 @@ export async function executePipeline(opts: ExecuteOptions): Promise<ExecutionRe
       if (loop.loops > 0) {
         ctx.metadata.set('ccr-retrieve.auto_loops', loop.loops);
         ctx.metadata.set('ccr-retrieve.applied', true);
+      }
+    }
+
+    if (modules.some((m) => m.name === 'steel-browser')) {
+      const loop = await maybeRunSteelBrowserLoop({
+        ctx,
+        response,
+        callProvider,
+        config: {},
+        logger: log,
+      });
+      response = loop.response;
+      if (loop.loops > 0) {
+        ctx.metadata.set('steel-browser.auto_loops', loop.loops);
+        ctx.metadata.set('steel-browser.applied', true);
       }
     }
   }

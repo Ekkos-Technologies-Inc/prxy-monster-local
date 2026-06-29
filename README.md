@@ -153,6 +153,7 @@ npm run prxy -- migrate                 # apply pending SQL migrations
 | Collective patterns | Yes | No |
 | Air-gap capable | No | Yes |
 | Billing / Stripe | Yes | None — no payment surface |
+| Agent wallet payments (MPP) | Yes | Cloud only — self-hosters bring their own provider keys |
 | Dashboard UI | Yes | None — REST + logs only |
 | Price | Free → $20+/mo | Free, forever (MIT) |
 

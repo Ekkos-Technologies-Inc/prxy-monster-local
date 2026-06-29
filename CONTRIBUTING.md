@@ -76,7 +76,7 @@ package; modules written here will work on cloud without changes.
 
 Want to publish a community module that other people can drop in? Don't put it
 in this repo. Publish it to npm under your own scope, then list it in the
-[community modules registry](https://github.com/Ekkos-Technologies-Inc/prxy-modules-registry)
+[community modules registry](https://github.com/Ekkos-Technologies-Inc/prxy-monster-modules-registry)
 once that's live.
 
 ## Issues
