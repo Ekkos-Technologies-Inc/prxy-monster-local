@@ -58,10 +58,15 @@
   },
   "keywords": [
     "ai",
-    "gateway",
-    "llm",
+    "ai-agents",
+    "llm-gateway",
+    "mcp",
+    "context-compression",
+    "claude-code",
     "anthropic",
     "openai",
+    "gateway",
+    "llm",
     "google",
     "gemini",
     "groq",
@@ -69,12 +74,12 @@
     "aws",
     "claude",
     "gpt",
-    "llama",
     "proxy",
     "self-hosted",
     "local-first",
     "privacy",
-    "airgap"
+    "airgap",
+    "openclaw"
   ],
   "repository": {
     "type": "git",

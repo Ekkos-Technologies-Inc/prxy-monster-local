@@ -9,8 +9,10 @@ import helmet from 'helmet';
 import { pinoHttp } from 'pino-http';
 
 import { anthropicHandler } from './handlers/anthropic.js';
+import { callsJsonHandler, debugPageHandler } from './handlers/debug.js';
 import { healthHandler } from './handlers/health.js';
 import { openaiHandler } from './handlers/openai.js';
+import { outcomesHandler } from './handlers/outcomes.js';
 import { pipelineHandler } from './handlers/pipeline.js';
 import { sendError } from './lib/errors.js';
 import { logger } from './lib/logger.js';
@@ -38,9 +40,12 @@ export function createApp(): Express {
 
   // Public
   app.get('/health', healthHandler);
+  app.get('/debug', debugPageHandler);
+  app.get('/v1/calls', callsJsonHandler);
 
   // Authed gateway endpoints
   app.get('/v1/pipeline', authMiddleware, pipelineHandler);
+  app.post('/v1/outcomes', authMiddleware, outcomesHandler);
   app.post('/v1/messages', authMiddleware, rateLimitMiddleware, anthropicHandler);
   app.post('/v1/chat/completions', authMiddleware, rateLimitMiddleware, openaiHandler);
 

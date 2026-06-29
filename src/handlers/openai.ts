@@ -18,6 +18,7 @@ import {
 } from '../lib/openai-shape.js';
 import { envKeyResolver, routeComplete, routeStream } from '../lib/router.js';
 import { setSseHeaders, writeSseData, writeSseDone } from '../lib/sse.js';
+import { attachPrxyHeaders, recordCall } from '../lib/call-log.js';
 import { buildRequestContext, executePipeline } from '../pipeline/executor.js';
 import { loadPipeline } from '../pipeline/loader.js';
 import { getStorage } from '../storage/adapter.js';
@@ -69,6 +70,14 @@ export async function openaiHandler(req: Request, res: Response): Promise<void> 
       if (shortCircuitedBy) {
         res.setHeader('x-prxy-cache', shortCircuitedBy);
       }
+      const callId = await recordCall({
+        ctx,
+        response,
+        modules,
+        path: '/v1/chat/completions',
+        shortCircuitedBy,
+      });
+      attachPrxyHeaders(res, callId, ctx.metadata);
       res.json(canonicalResponseToOpenAI(response));
     } catch (err) {
       logger.error({ err }, 'openai complete failed');

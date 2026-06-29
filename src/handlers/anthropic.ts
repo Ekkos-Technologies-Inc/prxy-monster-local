@@ -19,6 +19,7 @@ import { GatewayError, sendError } from '../lib/errors.js';
 import { logger } from '../lib/logger.js';
 import { envKeyResolver, routeComplete, routeStream } from '../lib/router.js';
 import { setSseHeaders, writeSseEvent } from '../lib/sse.js';
+import { attachPrxyHeaders, recordCall } from '../lib/call-log.js';
 import { buildRequestContext, executePipeline } from '../pipeline/executor.js';
 import { loadPipeline } from '../pipeline/loader.js';
 import { getStorage } from '../storage/adapter.js';
@@ -70,6 +71,14 @@ export async function anthropicHandler(req: Request, res: Response): Promise<voi
       if (shortCircuitedBy) {
         res.setHeader('x-prxy-cache', shortCircuitedBy);
       }
+      const callId = await recordCall({
+        ctx,
+        response,
+        modules,
+        path: '/v1/messages',
+        shortCircuitedBy,
+      });
+      attachPrxyHeaders(res, callId, ctx.metadata);
       res.json(canonicalResponseToAnthropic(response));
     } catch (err) {
       logger.error({ err }, 'anthropic complete failed');
